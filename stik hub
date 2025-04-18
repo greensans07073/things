@@ -59,5 +59,3 @@ Test1.CreateKeybind("Guardbreak", Enum.KeyCode.T, function()
 end)
 
 activateMelee()
-
-local Test2 = Window.CreateTab('TSBG')
