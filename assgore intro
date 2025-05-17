@@ -1,0 +1,82 @@
+wait(0.1)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(33180, -302, 14)
+
+
+wait(0.5)
+
+local Anim = Instance.new("Animation")
+Anim.AnimationId = "rbxassetid://11857750520"
+local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+k:Play(1)
+k:AdjustSpeed(0.3)
+
+
+local Players = game:GetService("Players")
+local PLAYER = game.Players.LocalPlayer
+local USERNAME = PLAYER.Name
+local function iterPageItems(pages)
+ return coroutine.wrap(function()
+  local pagenum = 1
+  while true do
+   for _, item in ipairs(pages:GetCurrentPage()) do
+    coroutine.yield(item, pagenum)
+   end
+   if pages.IsFinished then
+    break
+   end
+   pages:AdvanceToNextPageAsync()
+   pagenum = pagenum + 1
+  end
+ end)
+end
+local userId = Players:GetUserIdFromNameAsync(USERNAME)
+local friendPages = Players:GetFriendsAsync(userId)
+local usernames = {}
+for item, _pageNo in iterPageItems(friendPages) do
+ table.insert(usernames, item.Username)
+end
+
+
+local function getRandomItem(tbl)
+    local randomIndex = math.random(1, #tbl)
+    return tbl[randomIndex]
+end
+
+local randomItem = getRandomItem(usernames)
+
+
+game.Players:chat(('I am sorry,'))
+wait(1.5)
+game.Players:chat(randomItem)
+wait(1.5)
+game.Players:chat(('I couldnt save you...'))
+wait(2)
+game.Players:chat(('But with this power...'))
+wait(3)
+game.Players:chat(('I can save something else.'))
+
+local Anim = Instance.new("Animation")
+Anim.AnimationId = "rbxassetid://11883039121"
+local k = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
+k:Play(1)
+k:AdjustSpeed(0.9)
+
+wait(2)
+
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-375, 963, 736)
+
+
+
+local vfx = game:GetService("ReplicatedStorage").Effects.AkumaAuraF.Head:GetChildren()[6]
+local Amount = 100 -- how much times it plays at start
+
+local e = vfx:Clone()
+e.Parent = game.Players.LocalPlayer.Character.Spear.Spear
+e:Emit(Amount)
+e.Enabled = true
+e.LockedToPart = false
+e.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 190, 200)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(190, 0, 255))
+}
