@@ -1,0 +1,98 @@
+local Debris = game:GetService("Debris")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+local effectsEnabled = false
+
+local function createAndAttachLimbEffect(limbParent, limbName, color)
+	if not limbParent then
+
+		return
+	end
+
+	local effectPart = Instance.new("Part")
+	effectPart.Name = "SandyEffect"
+	effectPart.Anchored = true
+	effectPart.CanCollide = false
+	effectPart.Transparency = 0.25
+	effectPart.Color = color
+
+
+	if limbName == "Head" then
+		effectPart.Size = Vector3.new(1, 1, 1) 
+	else
+		effectPart.Size = limbParent.Size + Vector3.new(0.05, 0.05, 0.05)
+	end
+
+
+	effectPart.CFrame = limbParent.CFrame 
+
+
+	effectPart.Parent = limbParent
+
+	
+
+
+	Debris:AddItem(effectPart, 1)
+end
+
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+	if gameProcessedEvent then
+		return
+	end
+
+	if input.KeyCode == Enum.KeyCode.E then
+		effectsEnabled = not effectsEnabled
+		if effectsEnabled then
+      game.Players.LocalPlayer.Character.Data.TimeMulti.Value = 2
+			print("Limb effects ON")
+			local cool = Instance.new('ColorCorrectionEffect')
+			cool.Enabled = true
+			cool.TintColor = Color3.fromRGB(137, 255, 137)
+			cool.Parent = game.Lighting
+		else
+			print("Limb effects OFF")
+      game.Players.LocalPlayer.Character.Data.TimeMulti.Value = 1
+			local evilcool = game.Lighting:FindFirstChildOfClass('ColorCorrectionEffect')
+			if evilcool then
+				evilcool.Enabled = false
+				evilcool:Destroy()
+			end
+		end
+	end
+end)
+
+while true do
+	if effectsEnabled then
+		local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+		
+		if not character then 
+			continue
+		end
+
+		local wowColor = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+
+		-- Find R6 limbs and create effects
+		local leftLeg = character:FindFirstChild("Left Leg")
+		createAndAttachLimbEffect(leftLeg, "Left Leg", wowColor)
+
+		local rightLeg = character:FindFirstChild("Right Leg")
+		createAndAttachLimbEffect(rightLeg, "Right Leg", wowColor)
+
+		local leftArm = character:FindFirstChild("Left Arm")
+		createAndAttachLimbEffect(leftArm, "Left Arm", wowColor)
+
+		local torso = character:FindFirstChild("Torso")
+		createAndAttachLimbEffect(torso, "Torso", wowColor)
+
+		local head = character:FindFirstChild("Head")
+		createAndAttachLimbEffect(head, "Head", wowColor)
+
+		local rightArm = character:FindFirstChild("Right Arm")
+		createAndAttachLimbEffect(rightArm, "Right Arm", wowColor)
+	end
+
+	task.wait(0.05)
+end
+
