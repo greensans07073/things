@@ -1,0 +1,209 @@
+function info(txt)
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Credits = Instance.new("TextLabel")
+pcall(function() game.CoreGui.Revit:Destroy() end)
+task.wait(.1)
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Name = 'Revit'
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+
+
+spawn(function()
+Credits.Parent = ScreenGui
+Credits.Font=Enum.Font.Arcade
+Credits.TextColor3=Color3.new(1,1,1)
+Credits.Position = UDim2.new(0,0,0,0)
+Credits.TextSize = 35
+Credits.Size = UDim2.new(1,0,.1,0)
+Credits.Text = ''
+Credits.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Credits.BorderColor3 = Color3.fromRGB(0, 255, 255)
+end)
+function tw(var,s)
+local a = ""
+local s_l = #s
+for i = 1, s_l do
+local c = string.sub(s, i, i)
+a = a .. c
+var.Text = a
+if c == "." then
+wait(.6)
+elseif c == ";" then
+wait(.3)
+elseif c == "," then
+wait(.3)
+elseif c == "!" then
+wait(.3)
+end
+wait(.03)
+end end
+tw(Credits,txt)
+task.wait(2)
+ScreenGui:Destroy()
+end
+
+spawn(function()
+info('Script by Geen sas')
+info('dc-Greensans0444 tg-Geen_sas')
+info('this gui thing made by reap')
+end)
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+
+local rightArm = character:FindFirstChild("Right Arm")
+local leftArm = character:FindFirstChild("Left Arm")
+
+if not rightArm or not leftArm then
+    warn("Right or Left Arm not found! Ensure this is R6.")
+    return
+end
+
+local function createBlade(arm, name, positionOffset, rotation)
+    local blade = Instance.new("Part")
+    blade.Name = name
+    blade.BottomSurface = Enum.SurfaceType.Smooth
+    blade.TopSurface = Enum.SurfaceType.Smooth
+    blade.Size = Vector3.new(4, 1, 2)
+    blade.Anchored = false
+    blade.CanCollide = false
+
+    local mesh = Instance.new("SpecialMesh")
+    mesh.Scale = Vector3.new(0.5, 0.5, 0.75)
+    mesh.MeshId = "rbxassetid://11299765200"
+    mesh.TextureId = "rbxassetid://11299765288"
+    mesh.MeshType = Enum.MeshType.FileMesh
+    mesh.Parent = blade
+
+
+    local motor = Instance.new("Motor6D")
+    motor.Part0 = arm
+    motor.Part1 = blade
+    motor.Parent = arm
+
+
+    motor.C0 = CFrame.new(positionOffset.X, positionOffset.Y, positionOffset.Z) 
+        * CFrame.Angles(math.rad(rotation.X), math.rad(rotation.Y), math.rad(rotation.Z))
+
+
+    blade.Parent = character
+end
+
+
+createBlade(
+    rightArm, 
+    "Blade of Chaos (Right)", 
+    Vector3.new(0, -1, -1), 
+    Vector3.new(0, 90, -90) 
+)
+local lknife = game.Players.LocalPlayer.Character.LKnife
+local rknife = game.Players.LocalPlayer.Character.RKnife
+lknife:Destroy()
+rknife:Destroy()
+
+
+local chara = game.Players:CreateHumanoidModelFromDescription(
+	game.Players:GetHumanoidDescriptionFromUserId(162623443),
+	Enum.HumanoidRigType.R6	
+)
+chara.Parent = game.Players.LocalPlayer.Character
+chara.Name = ""
+
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+local floatingPart = chara.HumanoidRootPart
+
+floatingPart.Parent = workspace
+
+local offset = Vector3.new(10, 2, -5)
+
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if hrp and hrp.Parent then
+
+        local lookVector = hrp.CFrame.LookVector
+
+        local newPosition = hrp.CFrame.Position - lookVector * math.abs(offset.Z) + Vector3.new(5, offset.Y, 0)
+
+        floatingPart.CFrame = CFrame.new(newPosition, hrp.CFrame.Position)
+    end
+end)
+
+
+
+local animator = chara.Humanoid.Animator
+local animation = Instance.new("Animation")
+animation.AnimationId = "rbxassetid://12298946216"
+
+local animationTrack = animator:LoadAnimation(animation)
+animationTrack:Play()
+animationTrack.Looped = true
+
+
+
+local Players = game:GetService("Players")
+
+function morphToUser(userId)
+    local player = Players.LocalPlayer
+    local character = player.Character
+    if not character then return end
+    
+    local appearance = Players:GetCharacterAppearanceAsync(userId)
+    if not appearance then return end
+    
+    local toRemove = {
+        ["Accessory"] = true,
+        ["Shirt"] = true,
+        ["Pants"] = true,
+        ["CharacterMesh"] = true,
+        ["BodyColors"] = true
+    }
+    
+    for _, item in ipairs(character:GetChildren()) do
+        if toRemove[item.ClassName] then
+            item:Destroy()
+        end
+    end
+    
+    local face = character.Head:FindFirstChild("face")
+    if face then face:Destroy() end
+    
+    for _, item in ipairs(appearance:GetChildren()) do
+        if item:IsA("Shirt") or item:IsA("Pants") or item:IsA("BodyColors") then
+            item.Parent = character
+        elseif item:IsA("Accessory") then
+            character.Humanoid:AddAccessory(item)
+        elseif item.Name == character.Humanoid.RigType.Name then
+            local mesh = item:FindFirstChildOfClass("CharacterMesh")
+            if mesh then mesh.Parent = character end
+        end
+    end
+    
+    local newFace = appearance:FindFirstChild("face")
+    if newFace then
+        newFace.Parent = character.Head
+    else
+        local defaultFace = Instance.new("Decal")
+        defaultFace.Name = "face"
+        defaultFace.Face = "Front"
+        defaultFace.Texture = "rbxasset://textures/face.png"
+        defaultFace.Parent = character.Head
+    end
+    
+    character.Parent = nil
+    character.Parent = workspace
+end
+
+morphToUser(5734055172)
+chara.HumanoidRootPart.CanCollide = false
